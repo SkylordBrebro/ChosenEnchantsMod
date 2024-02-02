@@ -48,7 +48,7 @@ public class ChosenEnchantsMod implements ModInitializer {
 
 					// Remove the original books from the player's hand
 					player.setStackInHand(hand, ItemStack.EMPTY);
-
+					world.playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.ITEM_BOOK_PAGE_TURN, SoundCategory.PLAYERS, 1.0F, 1.0F);
 
 					// Return a TypedActionResult with SUCCESS
 					return TypedActionResult.success(player.getStackInHand(hand));
