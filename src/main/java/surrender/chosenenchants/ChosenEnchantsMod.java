@@ -29,7 +29,7 @@ public class ChosenEnchantsMod implements ModInitializer {
 
 			// Check if the item is a book and has a custom name
 			if (heldItem.getItem() == Items.BOOK && heldItem.hasCustomName()) {
-				String bookName = heldItem.getName().getString();
+				String bookName = heldItem.getName().getString().toLowerCase().replace(' ', '_');
 
 				// Check if the custom name matches a known enchantment
 				Enchantment enchantment = getEnchantment(bookName);
@@ -61,12 +61,10 @@ public class ChosenEnchantsMod implements ModInitializer {
 	}
 
 	private Enchantment getEnchantment(String name) {
-			for (Map.Entry<Identifier, Enchantment> entry : Registries.ENCHANTMENT.) {
-				Enchantment enchantment = entry.getValue();
-				if (enchantment.getName().equals(name)) {
-					return enchantment;
-				}
-			}
+		if (Registries.ENCHANTMENT.get(Identifier.tryParse(name)) != null) {
+			LOGGER.info(String.valueOf(Registries.ENCHANTMENT.get(Identifier.tryParse(name))));
+			return Registries.ENCHANTMENT.get(Identifier.tryParse(name));
+		}
 		return null; // Return null if no matching enchantment is found
 	}
 }
