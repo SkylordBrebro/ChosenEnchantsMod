@@ -2,8 +2,6 @@ package surrender.chosenenchants;
 
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
-import net.fabricmc.fabric.api.event.player.UseItemCallback;
-import net.minecraft.client.particle.ItemPickupParticle;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentLevelEntry;
 import net.minecraft.entity.ItemEntity;
@@ -13,16 +11,12 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.registry.Registries;
 import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.server.world.ThreadedAnvilChunkStorage;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.TypedActionResult;
 import net.minecraft.world.World;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.Map;
 
 public class ChosenEnchantsMod implements ModInitializer {
 	public static final String MOD_ID = "chosenenchants";
@@ -55,10 +49,11 @@ public class ChosenEnchantsMod implements ModInitializer {
 	private void checkPlayerInventory(ServerPlayerEntity player) {
 		player.getInventory().main.forEach(itemStack -> {
 			if (itemStack.getItem() == Items.BOOK && itemStack.hasCustomName()) {
-				String bookName = itemStack.getName().getString();
+				String bookName = itemStack.getName().getString().toLowerCase().replace(' ', '_');
 
 				// Process the book and enchantments
 				processEnchantmentBook(player, player.getWorld(), itemStack, bookName);
+				//player.getInventory().removeOne(itemStack);
 			}
 		});
 	}
@@ -79,11 +74,13 @@ public class ChosenEnchantsMod implements ModInitializer {
 			}
 
 			// Remove only books with the same custom name from the player's inventory
-			player.getInventory().removeOne(itemStack ->
-					itemStack.getItem().equals(Items.BOOK) && itemStack.hasCustomName() && itemStack.getName().getString().equals(bookName));
+			book.setCount(0);
+			//player.getInventory().removeOne(itemStack ->
+			//		book.getItem().equals(Items.BOOK) && book.hasCustomName() && book.getName().getString().equals(bookName));
 
 			// Optionally, you can play a sound or display a particle effect here
 			world.playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.ITEM_BOOK_PAGE_TURN, SoundCategory.PLAYERS, 1.0F, 1.0F);
+			world.playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.ENTITY_PLAYER_LEVELUP, SoundCategory.PLAYERS, 1.0F, 1.0F);
 		}
 	}
 
